@@ -48,19 +48,39 @@ namespace GradeCheck
             const int avgP = 65;
             const int avgE = 77;
             double attendanceM, attendanceP, attendanceE;
-            double.TryParse(textBoxAttendanceM.Text, out attendanceM);
-            double.TryParse(textBoxAttendanceP.Text, out attendanceP);
-            double.TryParse(textBoxAttendanceE.Text, out attendanceE);
             int scoreM, scoreP, scoreE;
-            int.TryParse(textBoxScoreM.Text, out scoreM);
-            int.TryParse(textBoxScoreP.Text, out scoreP);
-            int.TryParse(textBoxScoreE.Text, out scoreE);
-            labelResultM.Text = judgeResult(attendanceM, scoreM);
-            labelResultP.Text = judgeResult(attendanceP, scoreP);
-            labelResultE.Text = judgeResult(attendanceE, scoreE);
-            labelCompAvgM.Text = judgeAvg(scoreM, avgM);
-            labelCompAvgP.Text = judgeAvg(scoreP, avgP);
-            labelCompAvgE.Text = judgeAvg(scoreE, avgE);
+            if (!double.TryParse(textBoxAttendanceM.Text, out attendanceM) || !int.TryParse(textBoxScoreM.Text, out scoreM))
+            {
+                labelResultM.Text = "エラー";
+                labelCompAvgM.Text = "エラー";
+            }
+            else
+            {
+                labelResultM.Text = judgeResult(attendanceM, scoreM);
+                labelCompAvgM.Text = judgeAvg(scoreM, avgM);
+            }
+            if (!double.TryParse(textBoxAttendanceP.Text, out attendanceP) || !int.TryParse(textBoxScoreP.Text, out scoreP))
+            {
+                labelResultP.Text = "エラー";
+                labelCompAvgP.Text = "エラー";
+            }
+            else
+            {
+                labelResultP.Text = judgeResult(attendanceP, scoreP);
+                labelCompAvgP.Text = judgeAvg(scoreP, avgP);
+            }
+            if (!double.TryParse(textBoxAttendanceE.Text, out attendanceE) || !int.TryParse(textBoxScoreE.Text, out scoreE))
+            {
+                labelResultE.Text = "エラー";
+                labelCompAvgE.Text = "エラー";
+            }
+            else
+            {
+                labelResultE.Text = judgeResult(attendanceE, scoreE);
+                labelCompAvgE.Text = judgeAvg(scoreE, avgE);
+            }
+
+
         }
 
         private string judgeAvg(int score, int avg)
