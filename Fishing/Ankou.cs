@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace Fishing
 {
-    class Iwashi : Fish
+    class Ankou : Fish
     {
-        public Iwashi(int left) : base(left)
+        public Ankou(int _left) : base(_left)
         {
-            speed = 200.0;
+            speed = 100.0;
             isMovingAtDay = true;
             isEatingAtDay = true;
             isMovingAtNight = true;
-            isEatingAtNight = false;
+            isEatingAtNight = true;
         }
     }
 }

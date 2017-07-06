@@ -8,34 +8,42 @@ namespace Fishing
 {
     class Fish
     {
-        private System.Windows.Forms.PictureBox picture;
+        public int left;
         protected double speed;
-        private List<int> baitKeys;
-        private bool isActiveAtDay;
-        private bool isActiveAtNight;
+        protected bool isMovingAtDay;
+        protected bool isMovingAtNight;
+        protected bool isEatingAtDay;
+        protected bool isEatingAtNight;
 
-        public Fish(int x, int y, int width, int height)
+        public Fish(int _left)
         {
-            isActiveAtDay = true;
-            isActiveAtNight = true;
-            picture = new System.Windows.Forms.PictureBox();
-            picture.SetBounds(x, y, width, height);
-            picture.BackColor = System.Drawing.Color.Black;
+            left = _left;
         }
 
-        public void AddToForm(System.Windows.Forms.Form form)
+        public void Move(bool isAtDay, double timeSpan)
         {
-            form.Controls.Add(picture);
+            if ((isAtDay && isMovingAtDay) || (!isAtDay && isMovingAtNight))
+            {
+                left += (int)(timeSpan * speed);
+            }
         }
 
-        public void Move(double timeSpan)
+        public bool TryBite(bool isAtDay, int offset)
         {
-            picture.Left += (int)(timeSpan * speed);
+            if ((isAtDay && isEatingAtDay) || (!isAtDay && isEatingAtNight))
+            {;
+                if (offset >= 0 && offset <= 30)
+                {
+                    Respawn();
+                    return true;
+                }
+            }
+            return false;
         }
 
-        public void TryBite(bool isAtDay, int baitPosX)
+        public void Respawn()
         {
-
+            left = -200;
         }
     }
 }
