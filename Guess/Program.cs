@@ -22,6 +22,7 @@ namespace Guess
                 if (!int.TryParse(s, out guess))
                 {
                     Console.WriteLine("不正な値です。");
+                    Console.Read();
                     return;
                 }
                 if (guess == ans)
