@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardsWar", "..\CardsWar\Car
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InsectCatching", "..\InsectCatching\InsectCatching.csproj", "{438C1878-A09F-4092-B9BE-1B8B2E811E51}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janken", "..\Janken\Janken.csproj", "{74ABBBA5-8321-4104-AC2A-7605DC424F63}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{438C1878-A09F-4092-B9BE-1B8B2E811E51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{438C1878-A09F-4092-B9BE-1B8B2E811E51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{438C1878-A09F-4092-B9BE-1B8B2E811E51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74ABBBA5-8321-4104-AC2A-7605DC424F63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74ABBBA5-8321-4104-AC2A-7605DC424F63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74ABBBA5-8321-4104-AC2A-7605DC424F63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74ABBBA5-8321-4104-AC2A-7605DC424F63}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
