@@ -30,5 +30,22 @@ namespace InsectCatching
         {
             form.Controls.Add(picture);
         }
+
+        public void Activate()
+        {
+            picture.Visible = true;
+            picture.Enabled = true;
+        }
+
+        public void Inactivate()
+        {
+            picture.Visible = false;
+            picture.Enabled = false;
+        }
+
+        public void AddEventHandler(EventHandler eh)
+        {
+            picture.Click += eh;
+        }
     }
 }

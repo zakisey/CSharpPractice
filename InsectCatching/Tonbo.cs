@@ -22,38 +22,43 @@ namespace InsectCatching
             picture.Top += dy;
             if (picture.Right > rect.Width)
             {
+                picture.Left = rect.Width - picture.Width;
                 xdir = -1;
+                picture.BackgroundImage = Properties.Resources.dragonfly_left;
             }
             if (picture.Left < 0)
             {
+                picture.Left = 0;
                 xdir = 1;
+                picture.BackgroundImage = Properties.Resources.dragonfly_right;
             }
             if (picture.Top < 0)
             {
+                picture.Top = 0;
                 ydir = 1;
             }
             if (picture.Bottom > rect.Height)
             {
+                picture.Top = rect.Height - picture.Height;
                 ydir = -1;
             }
+
         }
 
         public override void Init()
         {
-            Console.WriteLine(rect);
             xdir = 1;
             ydir = 1;
             Random rand = new Random();
-            xspeed = xdir * rand.Next(30);
-            yspeed = ydir * rand.Next(30);
-            Console.WriteLine(xspeed);
-            Console.WriteLine(yspeed);
+            xspeed = rand.Next(30);
+            yspeed = rand.Next(30);
+
             picture = new PictureBox();
-            picture.Left = -30;
-            picture.Top = 50;
-            picture.Width = 50;
-            picture.Height = 50;
-            picture.BackColor = Color.Black;
+            picture.Width = 75;
+            picture.Height = 69;
+            picture.BackgroundImage = Properties.Resources.dragonfly_right;
+            picture.Left = 0;
+            picture.Top = 0;
         }
     }
 }
