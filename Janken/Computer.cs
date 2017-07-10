@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Janken
 {
-    class Computer : Player
+    internal class Computer : Player
     {
         public Computer()
         {

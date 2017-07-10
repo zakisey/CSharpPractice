@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Janken
+﻿namespace Janken
 {
-    class GameManager
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    internal class GameManager
     {
         private Player[] players;
         private Computer[] computers;
@@ -16,7 +16,7 @@ namespace Janken
 
         public GameManager()
         {
-            random = new Random();
+            this.random = new Random();
         }
 
         public void AskMembers()
@@ -26,8 +26,8 @@ namespace Janken
                 while (true)
                 {
                     Console.WriteLine("プレイヤーの人数を入力してください。");
-                    pNum = ReadNumber();
-                    if (pNum >= 0)
+                    this.pNum = this.ReadNumber();
+                    if (this.pNum >= 0)
                     {
                         break;
                     }
@@ -36,11 +36,12 @@ namespace Janken
                         Console.WriteLine("0以上の数字を入力してください。");
                     }
                 }
+
                 while (true)
                 {
                     Console.WriteLine("コンピュータの人数を入力してください。");
-                    cNum = ReadNumber();
-                    if (cNum >= 0)
+                    this.cNum = this.ReadNumber();
+                    if (this.cNum >= 0)
                     {
                         break;
                     }
@@ -49,7 +50,7 @@ namespace Janken
                         Console.WriteLine("0以上の数字を入力してください。");
                     }
                 }
-                if (pNum + cNum >= 2)
+                if (this.pNum + this.cNum >= 2)
                 {
                     break;
                 }
@@ -58,20 +59,20 @@ namespace Janken
                     Console.WriteLine("合計人数が2人以上になるように入力してください。");
                 }
             }
-            InitMembers();
+            this.InitMembers();
         }
 
         private void InitMembers()
         {
-            players = new Player[pNum];
-            computers = new Computer[cNum];
-            for (int i = 0; i < pNum; i++)
+            players = new Player[this.pNum];
+            computers = new Computer[this.cNum];
+            for (int i = 0; i < this.pNum; i++)
             {
                 players[i] = new Player();
             }
             for (int i = 0; i < cNum; i++)
             {
-                computers[i] = new Computer();
+                this.computers[i] = new Computer();
             }
         }
 
@@ -84,14 +85,13 @@ namespace Janken
                 string[] row = s.Split(',');
                 int count = int.Parse(row[0]);
                 int hand = int.Parse(row[1]);
-                if (count == pNum + cNum && hand != -1)
+                if (count == this.pNum + this.cNum && hand != -1)
                 {
                     handData[hand] += 1;
                 }
             }
-            
-            int total = handData[0] + handData[1] + handData[2];
 
+            int total = handData[0] + handData[1] + handData[2];
 
             if (total == 0)
             {
@@ -104,6 +104,7 @@ namespace Janken
                 {
                     winRate[i] = (double)handData[i] / (double)total * 100;
                 }
+
                 Console.WriteLine($"{pNum + cNum}人でのじゃんけんでのこれまでの勝率は、\n" +
                     $"グー: {winRate[0].ToString("F")} %, " +
                     $"チョキ: {winRate[1].ToString("F")} %, " +
@@ -113,21 +114,21 @@ namespace Janken
 
         public void AskPlayerHands()
         {
-            for (int i = 0; i < pNum; i++)
+            for (int i = 0; i < this.pNum; i++)
             {
                 while (true)
                 {
                     Console.WriteLine($"プレイヤー{i}の手を入力してください。");
                     Console.WriteLine("0: グー, 1: チョキ, 2: パー, 3: データを見る");
-                    int input = ReadNumber();
+                    int input = this.ReadNumber();
                     if (input >= 0 && input <= 2)
                     {
-                        players[i].Hand = (JankenHand)input;
+                        this.players[i].Hand = (JankenHand)input;
                         break;
                     }
                     else if (input == 3)
                     {
-                        ShowStatistics();
+                        this.ShowStatistics();
                     }
                     else
                     {
@@ -139,9 +140,9 @@ namespace Janken
 
         public void SetComputerHands()
         {
-            for (int i = 0; i < cNum; i++)
+            for (int i = 0; i < this.cNum; i++)
             {
-                computers[i].SetRandomHand(random);
+                this.computers[i].SetRandomHand(this.random);
             }
         }
 
@@ -153,18 +154,20 @@ namespace Janken
         private string Judge(out bool isDraw)
         {
             bool rFlag = false, sFlag = false, pFlag = false;
-            foreach (Player player in players)
+            foreach (Player player in this.players)
             {
                 rFlag = rFlag || (player.Hand == JankenHand.Rock);
                 sFlag = sFlag || (player.Hand == JankenHand.Scissor);
                 pFlag = pFlag || (player.Hand == JankenHand.Paper);
             }
-            foreach (Computer computer in computers)
+
+            foreach (Computer computer in this.computers)
             {
                 rFlag = rFlag || (computer.Hand == JankenHand.Rock);
                 sFlag = sFlag || (computer.Hand == JankenHand.Scissor);
                 pFlag = pFlag || (computer.Hand == JankenHand.Paper);
             }
+
             JankenHand winningHand;
             if (rFlag && sFlag && !pFlag)
             {
@@ -180,22 +183,22 @@ namespace Janken
             }
             else
             {
-                WriteToCSV(pNum + cNum, -1);
+                this.WriteToCSV(this.pNum + this.cNum, -1);
                 isDraw = true;
                 return "あいこです。";
             }
 
-            string ret = "";
-            for (int i = 0; i < pNum; i++)
+            string ret = string.Empty;
+            for (int i = 0; i < this.pNum; i++)
             {
-                if (players[i].Hand == winningHand)
+                if (this.players[i].Hand == winningHand)
                 {
                     ret += "プレイヤー" + i + ", ";
                 }
             }
-            for (int i = 0; i < cNum; i++)
+            for (int i = 0; i < this.cNum; i++)
             {
-                if (computers[i].Hand == winningHand)
+                if (this.computers[i].Hand == winningHand)
                 {
                     ret += "コンピュータ" + i + ", ";
                 }
@@ -206,7 +209,7 @@ namespace Janken
 
             isDraw = false;
 
-            WriteToCSV(pNum + cNum, (int)winningHand);
+            this.WriteToCSV(this.pNum + cNum, (int)winningHand);
             return ret;
         }
 
@@ -214,14 +217,16 @@ namespace Janken
         {
             for (int i = 0; i < pNum; i++)
             {
-                Console.WriteLine($"プレイヤー{i}: " + players[i].Hand.DisplayName());
+                Console.WriteLine($"プレイヤー{i}: " + this.players[i].Hand.DisplayName());
             }
+
             for (int i = 0; i < cNum; i++)
             {
-                Console.WriteLine($"コンピュータ{i}: " + computers[i].Hand.DisplayName());
+                Console.WriteLine($"コンピュータ{i}: " + this.computers[i].Hand.DisplayName());
             }
+
             bool isDraw;
-            string result = Judge(out isDraw);
+            string result = this.Judge(out isDraw);
             Console.WriteLine(result);
             return isDraw;
         }
@@ -232,13 +237,13 @@ namespace Janken
             {
                 Console.WriteLine("再戦しますか？");
                 Console.WriteLine("0: 同じ人数で再戦 1: 人数を変更して再戦 2: 終了");
-                int i = ReadNumber();
+                int i = this.ReadNumber();
                 switch (i)
                 {
                     case 0:
                         return false;
                     case 1:
-                        AskMembers();
+                        this.AskMembers();
                         return false;
                     case 2:
                         return true;

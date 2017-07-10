@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Janken
 {
-    enum JankenHand
+    internal enum JankenHand
     {
         Rock, Scissor, Paper
     }
 
-    static class JankenHandExt
+    internal static class JankenHandExt
     {
         public static string DisplayName(this JankenHand hand)
         {
@@ -20,7 +20,7 @@ namespace Janken
         }
     }
 
-    class Player
+    internal class Player
     {
         public JankenHand Hand { get; set; }
 

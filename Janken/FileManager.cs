@@ -1,22 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-
-namespace Janken
+﻿namespace Janken
 {
-    static class FileManager
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    internal static class FileManager
     {
-        public static string filePath = "janken_statistics.csv";
+        private static string FilePath = "janken_statistics.csv";
 
         public static List<string> ReadCSV()
         {
-            using (StreamReader reader = new StreamReader(filePath))
+            using (StreamReader reader = new StreamReader(FilePath))
             {
                 string line;
-                string[] row;
                 List<string> ret = new List<string>();
 
                 while ((line = reader.ReadLine()) != null)
@@ -30,8 +29,10 @@ namespace Janken
 
         public static void WriteCSV(string s)
         {
-            using (StreamWriter writer = new StreamWriter(filePath, true, Encoding.Default))
+            using (StreamWriter writer = new StreamWriter(FilePath, true, Encoding.Default))
+            {
                 writer.WriteLine(s);
+            }
         }
     }
 }
