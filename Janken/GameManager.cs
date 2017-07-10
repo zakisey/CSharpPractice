@@ -13,7 +13,7 @@ namespace Janken
         private Random random;
         private int pNum;
         private int cNum;
-        
+
         public GameManager()
         {
             random = new Random();
@@ -69,9 +69,45 @@ namespace Janken
             {
                 players[i] = new Player();
             }
-            for (int i = 0; i <cNum; i++)
+            for (int i = 0; i < cNum; i++)
             {
                 computers[i] = new Computer();
+            }
+        }
+
+        private void ShowStatistics()
+        {
+            List<string> l = FileManager.ReadCSV();
+            int[] handData = new int[] { 0, 0, 0 };
+            foreach (string s in l)
+            {
+                string[] row = s.Split(',');
+                int count = int.Parse(row[0]);
+                int hand = int.Parse(row[1]);
+                if (count == pNum + cNum && hand != -1)
+                {
+                    handData[hand] += 1;
+                }
+            }
+            
+            int total = handData[0] + handData[1] + handData[2];
+
+
+            if (total == 0)
+            {
+                Console.WriteLine("データがありません。");
+            }
+            else
+            {
+                double[] winRate = new double[3];
+                for (int i = 0; i < winRate.Length; i++)
+                {
+                    winRate[i] = (double)handData[i] / (double)total * 100;
+                }
+                Console.WriteLine($"{pNum + cNum}人でのじゃんけんでのこれまでの勝率は、\n" +
+                    $"グー: {winRate[0].ToString("F")} %, " +
+                    $"チョキ: {winRate[1].ToString("F")} %, " +
+                    $"パー: {winRate[2].ToString("F")} % です。\n");
             }
         }
 
@@ -81,17 +117,21 @@ namespace Janken
             {
                 while (true)
                 {
-                    Console.WriteLine("プレイヤー{0}の手を入力してください。", i);
-                    Console.WriteLine("0: グー, 1: チョキ, 2: パー");
+                    Console.WriteLine($"プレイヤー{i}の手を入力してください。");
+                    Console.WriteLine("0: グー, 1: チョキ, 2: パー, 3: データを見る");
                     int input = ReadNumber();
                     if (input >= 0 && input <= 2)
                     {
                         players[i].Hand = (JankenHand)input;
                         break;
                     }
+                    else if (input == 3)
+                    {
+                        ShowStatistics();
+                    }
                     else
                     {
-                        Console.WriteLine("0から2の整数を入力してください。");
+                        Console.WriteLine("0から3の整数を入力してください。");
                     }
                 }
             }
@@ -103,6 +143,11 @@ namespace Janken
             {
                 computers[i].SetRandomHand(random);
             }
+        }
+
+        private void WriteToCSV(int count, int result)
+        {
+            FileManager.WriteCSV(count + "," + result);
         }
 
         private string Judge(out bool isDraw)
@@ -135,6 +180,7 @@ namespace Janken
             }
             else
             {
+                WriteToCSV(pNum + cNum, -1);
                 isDraw = true;
                 return "あいこです。";
             }
@@ -156,9 +202,11 @@ namespace Janken
             }
 
             ret = ret.TrimEnd(',', ' ');
-            ret += "の勝ちです。";
+            ret += $"が{winningHand.DisplayName()}で勝ちました。";
 
             isDraw = false;
+
+            WriteToCSV(pNum + cNum, (int)winningHand);
             return ret;
         }
 
@@ -166,11 +214,11 @@ namespace Janken
         {
             for (int i = 0; i < pNum; i++)
             {
-                Console.WriteLine("プレイヤー" + i + ": " + players[i].Hand.DisplayName());
+                Console.WriteLine($"プレイヤー{i}: " + players[i].Hand.DisplayName());
             }
             for (int i = 0; i < cNum; i++)
             {
-                Console.WriteLine("コンピュータ" + i + ": " + computers[i].Hand.DisplayName());
+                Console.WriteLine($"コンピュータ{i}: " + computers[i].Hand.DisplayName());
             }
             bool isDraw;
             string result = Judge(out isDraw);

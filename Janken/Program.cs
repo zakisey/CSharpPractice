@@ -19,15 +19,9 @@ namespace Janken
                 {
                     gm.AskPlayerHands();
                     gm.SetComputerHands();
-                    if(!gm.ShowResult())
-                    {
-                        break;
-                    }
+                    if(!gm.ShowResult()) break;
                 }
-                if(gm.AskQuit())
-                {
-                    break;
-                }
+                if(gm.AskQuit()) break;
             }
         }
     }
