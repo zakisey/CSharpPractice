@@ -2,55 +2,42 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     internal class GameManager
     {
-        private Player[] players;
-        private Computer[] computers;
-        private Random random;
-        private int pNum;
-        private int cNum;
+        private Game game;
 
         public GameManager()
         {
-            this.random = new Random();
         }
 
-        public void AskMembers()
+        public void PlayGame()
         {
+            this.AskMembers();
+            do
+            {
+                Result result;
+                do
+                {
+                    this.AskPlayerHands();
+                    this.game.SetComputerHands();
+                    result = this.game.Judge();
+                    this.WriteToCSV(result);
+                    this.ShowResult(result);
+                }
+                while (result.IsDraw);
+            }
+            while (!this.AskQuit());
+        }
+
+        private void AskMembers()
+        {
+            int pNum, cNum;
             while (true)
             {
-                while (true)
-                {
-                    Console.WriteLine("プレイヤーの人数を入力してください。");
-                    this.pNum = this.ReadNumber();
-                    if (this.pNum >= 0)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        Console.WriteLine("0以上の数字を入力してください。");
-                    }
-                }
-
-                while (true)
-                {
-                    Console.WriteLine("コンピュータの人数を入力してください。");
-                    this.cNum = this.ReadNumber();
-                    if (this.cNum >= 0)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        Console.WriteLine("0以上の数字を入力してください。");
-                    }
-                }
-                if (this.pNum + this.cNum >= 2)
+                pNum = this.AskPlayersNum();
+                cNum = this.AskComputersNum();
+                if (pNum + cNum >= 2)
                 {
                     break;
                 }
@@ -59,38 +46,67 @@
                     Console.WriteLine("合計人数が2人以上になるように入力してください。");
                 }
             }
-            this.InitMembers();
+            this.game = new Game(pNum, cNum);
         }
 
-        private void InitMembers()
+        private int AskPlayersNum()
         {
-            players = new Player[this.pNum];
-            computers = new Computer[this.cNum];
-            for (int i = 0; i < this.pNum; i++)
+            int pNum;
+            while (true)
             {
-                players[i] = new Player();
+                Console.WriteLine("プレイヤーの人数を入力してください。");
+                pNum = this.ReadNumber();
+                if (pNum >= 0)
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("0以上の数字を入力してください。");
+                }
             }
-            for (int i = 0; i < cNum; i++)
-            {
-                this.computers[i] = new Computer();
-            }
+
+            return pNum;
         }
 
-        private void ShowStatistics()
+        private int AskComputersNum()
         {
-            List<string> l = FileManager.ReadCSV();
+            int cNum;
+            while (true)
+            {
+                Console.WriteLine("コンピュータの人数を入力してください。");
+                cNum = this.ReadNumber();
+                if (cNum >= 0)
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("0以上の数字を入力してください。");
+                }
+            }
+
+            return cNum;
+        }
+
+        private int[] GetHandData(List<string> l)
+        {
             int[] handData = new int[] { 0, 0, 0 };
             foreach (string s in l)
             {
                 string[] row = s.Split(',');
                 int count = int.Parse(row[0]);
                 int hand = int.Parse(row[1]);
-                if (count == this.pNum + this.cNum && hand != -1)
+                if (count == game.Players.Length + game.Computers.Length && hand != -1)
                 {
                     handData[hand] += 1;
                 }
             }
+            return handData;
+        }
 
+        private void ShowWinRate(int[] handData)
+        {
             int total = handData[0] + handData[1] + handData[2];
 
             if (total == 0)
@@ -105,16 +121,23 @@
                     winRate[i] = (double)handData[i] / (double)total * 100;
                 }
 
-                Console.WriteLine($"{pNum + cNum}人でのじゃんけんでのこれまでの勝率は、\n" +
+                Console.WriteLine($"{game.Players.Length + game.Computers.Length}人でのじゃんけんでのこれまでの勝率は、\n" +
                     $"グー: {winRate[0].ToString("F")} %, " +
                     $"チョキ: {winRate[1].ToString("F")} %, " +
                     $"パー: {winRate[2].ToString("F")} % です。\n");
             }
         }
 
-        public void AskPlayerHands()
+        private void ShowStatistics()
         {
-            for (int i = 0; i < this.pNum; i++)
+            List<string> l = FileManager.ReadCSV();
+            int[] handData = GetHandData(l);
+            this.ShowWinRate(handData);
+        }
+
+        private void AskPlayerHands()
+        {
+            for (int i = 0; i < this.game.Players.Length; i++)
             {
                 while (true)
                 {
@@ -123,7 +146,7 @@
                     int input = this.ReadNumber();
                     if (input >= 0 && input <= 2)
                     {
-                        this.players[i].Hand = (JankenHand)input;
+                        this.game.Players[i].Hand = (JankenHand)input;
                         break;
                     }
                     else if (input == 3)
@@ -138,100 +161,34 @@
             }
         }
 
-        public void SetComputerHands()
+        private void WriteToCSV(Result result)
         {
-            for (int i = 0; i < this.cNum; i++)
+            if (!result.IsDraw)
             {
-                this.computers[i].SetRandomHand(this.random);
+                FileManager.WriteCSV(this.game.Players.Length + this.game.Computers.Length + "," + (int)result.WinningHand);
             }
         }
 
-        private void WriteToCSV(int count, int result)
+        private void ShowHands()
         {
-            FileManager.WriteCSV(count + "," + result);
+            foreach (Player player in this.game.Players)
+            {
+                Console.WriteLine(player.Name + ": " + player.Hand.DisplayName());
+            }
+
+            foreach (Computer computer in this.game.Computers)
+            {
+                Console.WriteLine(computer.Name + ": " + computer.Hand.DisplayName());
+            }
         }
 
-        private string Judge(out bool isDraw)
+        private void ShowResult(Result result)
         {
-            bool rFlag = false, sFlag = false, pFlag = false;
-            foreach (Player player in this.players)
-            {
-                rFlag = rFlag || (player.Hand == JankenHand.Rock);
-                sFlag = sFlag || (player.Hand == JankenHand.Scissor);
-                pFlag = pFlag || (player.Hand == JankenHand.Paper);
-            }
-
-            foreach (Computer computer in this.computers)
-            {
-                rFlag = rFlag || (computer.Hand == JankenHand.Rock);
-                sFlag = sFlag || (computer.Hand == JankenHand.Scissor);
-                pFlag = pFlag || (computer.Hand == JankenHand.Paper);
-            }
-
-            JankenHand winningHand;
-            if (rFlag && sFlag && !pFlag)
-            {
-                winningHand = JankenHand.Rock;
-            }
-            else if (!rFlag && sFlag && pFlag)
-            {
-                winningHand = JankenHand.Scissor;
-            }
-            else if (rFlag && !sFlag && pFlag)
-            {
-                winningHand = JankenHand.Paper;
-            }
-            else
-            {
-                this.WriteToCSV(this.pNum + this.cNum, -1);
-                isDraw = true;
-                return "あいこです。";
-            }
-
-            string ret = string.Empty;
-            for (int i = 0; i < this.pNum; i++)
-            {
-                if (this.players[i].Hand == winningHand)
-                {
-                    ret += "プレイヤー" + i + ", ";
-                }
-            }
-            for (int i = 0; i < this.cNum; i++)
-            {
-                if (this.computers[i].Hand == winningHand)
-                {
-                    ret += "コンピュータ" + i + ", ";
-                }
-            }
-
-            ret = ret.TrimEnd(',', ' ');
-            ret += $"が{winningHand.DisplayName()}で勝ちました。";
-
-            isDraw = false;
-
-            this.WriteToCSV(this.pNum + cNum, (int)winningHand);
-            return ret;
+            this.ShowHands();
+            Console.WriteLine(result.GetString());
         }
 
-        public bool ShowResult()
-        {
-            for (int i = 0; i < pNum; i++)
-            {
-                Console.WriteLine($"プレイヤー{i}: " + this.players[i].Hand.DisplayName());
-            }
-
-            for (int i = 0; i < cNum; i++)
-            {
-                Console.WriteLine($"コンピュータ{i}: " + this.computers[i].Hand.DisplayName());
-            }
-
-            bool isDraw;
-            string result = this.Judge(out isDraw);
-            Console.WriteLine(result);
-            return isDraw;
-        }
-
-        public bool AskQuit()
+        private bool AskQuit()
         {
             while (true)
             {

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Janken
+﻿namespace Janken
 {
     internal enum JankenHand
     {
@@ -22,10 +16,13 @@ namespace Janken
 
     internal class Player
     {
-        public JankenHand Hand { get; set; }
-
-        public Player()
+        public Player(string name)
         {
+            this.Name = name;
         }
+
+        public string Name { get; set; }
+
+        public JankenHand Hand { get; set; }
     }
 }
