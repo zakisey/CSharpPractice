@@ -13,7 +13,7 @@
 
         public void PlayGame()
         {
-            this.AskMembers();
+            this.AskMembersNum();
             do
             {
                 Result result;
@@ -30,40 +30,30 @@
             while (!this.AskQuit());
         }
 
-        private void AskMembers()
+        private void AskMembersNum()
         {
             int pNum, cNum;
-            while (true)
+            pNum = this.AskPlayersNum();
+            cNum = this.AskComputersNum();
+            while (pNum + cNum < 2)
             {
+                Console.WriteLine("合計人数が2人以上になるように入力してください。");
                 pNum = this.AskPlayersNum();
                 cNum = this.AskComputersNum();
-                if (pNum + cNum >= 2)
-                {
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("合計人数が2人以上になるように入力してください。");
-                }
             }
+
             this.game = new Game(pNum, cNum);
         }
 
         private int AskPlayersNum()
         {
             int pNum;
-            while (true)
+            Console.WriteLine("プレイヤーの人数を入力してください。");
+            pNum = this.ReadNumber();
+            while (pNum < 0)
             {
-                Console.WriteLine("プレイヤーの人数を入力してください。");
+                Console.WriteLine("0以上の数字を入力してください。");
                 pNum = this.ReadNumber();
-                if (pNum >= 0)
-                {
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("0以上の数字を入力してください。");
-                }
             }
 
             return pNum;
@@ -72,18 +62,12 @@
         private int AskComputersNum()
         {
             int cNum;
-            while (true)
+            Console.WriteLine("コンピュータの人数を入力してください。");
+            cNum = this.ReadNumber();
+            while (cNum < 0)
             {
-                Console.WriteLine("コンピュータの人数を入力してください。");
+                Console.WriteLine("0以上の数字を入力してください。");
                 cNum = this.ReadNumber();
-                if (cNum >= 0)
-                {
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("0以上の数字を入力してください。");
-                }
             }
 
             return cNum;
@@ -97,7 +81,7 @@
                 string[] row = s.Split(',');
                 int count = int.Parse(row[0]);
                 int hand = int.Parse(row[1]);
-                if (count == game.Players.Length + game.Computers.Length && hand != -1)
+                if (count == this.game.GetTotalMembersNum() && hand != -1)
                 {
                     handData[hand] += 1;
                 }
@@ -121,7 +105,7 @@
                     winRate[i] = (double)handData[i] / (double)total * 100;
                 }
 
-                Console.WriteLine($"{game.Players.Length + game.Computers.Length}人でのじゃんけんでのこれまでの勝率は、\n" +
+                Console.WriteLine($"{this.game.GetTotalMembersNum()}人でのじゃんけんでのこれまでの勝率は、\n" +
                     $"グー: {winRate[0].ToString("F")} %, " +
                     $"チョキ: {winRate[1].ToString("F")} %, " +
                     $"パー: {winRate[2].ToString("F")} % です。\n");
@@ -137,16 +121,16 @@
 
         private void AskPlayerHands()
         {
-            for (int i = 0; i < this.game.Players.Length; i++)
+            foreach (Player player in this.game.Players)
             {
                 while (true)
                 {
-                    Console.WriteLine($"プレイヤー{i}の手を入力してください。");
+                    Console.WriteLine($"{player.Name}の手を入力してください。");
                     Console.WriteLine("0: グー, 1: チョキ, 2: パー, 3: データを見る");
                     int input = this.ReadNumber();
                     if (input >= 0 && input <= 2)
                     {
-                        this.game.Players[i].Hand = (JankenHand)input;
+                        player.Hand = (JankenHand)input;
                         break;
                     }
                     else if (input == 3)
@@ -165,7 +149,7 @@
         {
             if (!result.IsDraw)
             {
-                FileManager.WriteCSV(this.game.Players.Length + this.game.Computers.Length + "," + (int)result.WinningHand);
+                FileManager.WriteCSV(this.game.GetTotalMembersNum() + "," + (int)result.WinningHand);
             }
         }
 
@@ -188,6 +172,10 @@
             Console.WriteLine(result.GetString());
         }
 
+        /// <summary>
+        /// じゃんけんゲームを終えるかどうかの判定をし、判定結果を返す
+        /// </summary>
+        /// <returns>じゃんけんゲームを終える場合、true. それ以外の場合、false</returns>
         private bool AskQuit()
         {
             while (true)
@@ -200,7 +188,7 @@
                     case 0:
                         return false;
                     case 1:
-                        this.AskMembers();
+                        this.AskMembersNum();
                         return false;
                     case 2:
                         return true;

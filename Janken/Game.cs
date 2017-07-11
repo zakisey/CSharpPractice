@@ -25,34 +25,26 @@ namespace Janken
             }
         }
 
+        public int GetTotalMembersNum()
+        {
+            return this.Players.Length + this.Computers.Length;
+        }
+
         public Result Judge()
         {
+            bool[] handFlags = this.CheckHands();
+
             Result result = new Result();
             result.IsDraw = false;
-            bool rFlag = false, sFlag = false, pFlag = false;
-            foreach (Player player in this.Players)
-            {
-                rFlag = rFlag || (player.Hand == JankenHand.Rock);
-                sFlag = sFlag || (player.Hand == JankenHand.Scissor);
-                pFlag = pFlag || (player.Hand == JankenHand.Paper);
-            }
-
-            foreach (Computer computer in this.Computers)
-            {
-                rFlag = rFlag || (computer.Hand == JankenHand.Rock);
-                sFlag = sFlag || (computer.Hand == JankenHand.Scissor);
-                pFlag = pFlag || (computer.Hand == JankenHand.Paper);
-            }
-
-            if (rFlag && sFlag && !pFlag)
+            if (handFlags[0] && handFlags[1] && !handFlags[2])
             {
                 result.WinningHand = JankenHand.Rock;
             }
-            else if (!rFlag && sFlag && pFlag)
+            else if (!handFlags[0] && handFlags[1] && handFlags[2])
             {
                 result.WinningHand = JankenHand.Scissor;
             }
-            else if (rFlag && !sFlag && pFlag)
+            else if (handFlags[0] && !handFlags[1] && handFlags[2])
             {
                 result.WinningHand = JankenHand.Paper;
             }
@@ -61,23 +53,43 @@ namespace Janken
                 result.IsDraw = true;
             }
 
-            for (int i = 0; i < this.Players.Length; i++)
+            foreach (Player player in this.Players)
             {
-                if (this.Players[i].Hand == result.WinningHand)
+                if (player.Hand == result.WinningHand)
                 {
-                    result.WinnerNames.Add(this.Players[i].Name);
+                    result.WinnerNames.Add(player.Name);
                 }
             }
 
-            for (int i = 0; i < this.Computers.Length; i++)
+            foreach (Computer computer in this.Computers)
             {
-                if (this.Computers[i].Hand == result.WinningHand)
+                if (computer.Hand == result.WinningHand)
                 {
-                    result.WinnerNames.Add(this.Computers[i].Name);
+                    result.WinnerNames.Add(computer.Name);
                 }
             }
 
             return result;
+        }
+
+        private bool[] CheckHands()
+        {
+            bool[] ret = new bool[] { false, false, false };
+            foreach (Player player in this.Players)
+            {
+                ret[0] = ret[0] || (player.Hand == JankenHand.Rock);
+                ret[1] = ret[1] || (player.Hand == JankenHand.Scissor);
+                ret[2] = ret[2] || (player.Hand == JankenHand.Paper);
+            }
+
+            foreach (Computer computer in this.Computers)
+            {
+                ret[0] = ret[0] || (computer.Hand == JankenHand.Rock);
+                ret[1] = ret[1] || (computer.Hand == JankenHand.Scissor);
+                ret[2] = ret[2] || (computer.Hand == JankenHand.Paper);
+            }
+
+            return ret;
         }
 
         private void InitPlayers(int playersNum)
