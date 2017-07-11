@@ -14,6 +14,9 @@
         }
     }
 
+    /// <summary>
+    /// じゃんけんのプレイヤー(人間)を表すクラス
+    /// </summary>
     internal class Player
     {
         public Player(string name)

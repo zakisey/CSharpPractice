@@ -2,6 +2,10 @@
 
 namespace Janken
 {
+    /// <summary>
+    /// じゃんけんの結果を表すクラス
+    /// 勝ったメンバーの名前と、勝った手と、引き分けかどうかのフラグをもつ
+    /// </summary>
     internal class Result
     {
         public Result()
@@ -15,6 +19,10 @@ namespace Janken
 
         public bool IsDraw { get; set; }
 
+        /// <summary>
+        /// じゃんけんの結果を表す文章を返すメソッド
+        /// </summary>
+        /// <returns>じゃんけんの結果</returns>
         public string GetString()
         {
             string ret = string.Empty;

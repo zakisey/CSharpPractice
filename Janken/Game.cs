@@ -2,6 +2,9 @@
 
 namespace Janken
 {
+    /// <summary>
+    /// ゲームの情報を保存するクラス
+    /// </summary>
     internal class Game
    {
         private Random random;
@@ -17,6 +20,9 @@ namespace Janken
 
         public Computer[] Computers { get; set; }
 
+        /// <summary>
+        /// すべてのコンピュータにランダムな手を設定する
+        /// </summary>
         public void SetComputerHands()
         {
             foreach (Computer computer in this.Computers)
@@ -30,6 +36,10 @@ namespace Janken
             return this.Players.Length + this.Computers.Length;
         }
 
+        /// <summary>
+        /// じゃんけんの勝敗を判定する
+        /// </summary>
+        /// <returns>じゃんけんの結果をResult型のインスタンスに格納して返す</returns>
         public Result Judge()
         {
             bool[] handFlags = this.CheckHands();

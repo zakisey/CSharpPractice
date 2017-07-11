@@ -3,6 +3,10 @@
     using System;
     using System.Collections.Generic;
 
+    /// <summary>
+    /// ゲームの進行のためのクラス
+    /// プロンプトを表示し、ユーザからの入力を受け取る
+    /// </summary>
     internal class GameManager
     {
         private Game game;
@@ -11,6 +15,9 @@
         {
         }
 
+        /// <summary>
+        /// メインループ
+        /// </summary>
         public void PlayGame()
         {
             this.AskMembersNum();
@@ -86,6 +93,7 @@
                     handData[hand] += 1;
                 }
             }
+
             return handData;
         }
 
