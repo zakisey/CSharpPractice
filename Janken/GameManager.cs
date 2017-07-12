@@ -20,7 +20,7 @@
         /// </summary>
         public void PlayGame()
         {
-            this.AskMembersNum();
+            this.InitGame();
             do
             {
                 Result result;
@@ -31,53 +31,45 @@
                     result = this.game.Judge();
                     this.WriteToCSV(result);
                     this.ShowResult(result);
+
                 }
+
                 while (result.IsDraw);
             }
-            while (!this.AskQuit());
+            while (this.AskContinue());
         }
 
-        private void AskMembersNum()
+        private void InitGame()
         {
-            int pNum, cNum;
-            pNum = this.AskPlayersNum();
-            cNum = this.AskComputersNum();
+            var nums = this.AskMembersNum();
+            this.game = new Game(nums.Item1, nums.Item2);
+        }
+
+        private Tuple<int, int> AskMembersNum()
+        {
+            int pNum = this.AskNumber("プレイヤー");
+            int cNum = this.AskNumber("コンピュータ");
             while (pNum + cNum < 2)
             {
                 Console.WriteLine("合計人数が2人以上になるように入力してください。");
-                pNum = this.AskPlayersNum();
-                cNum = this.AskComputersNum();
+                pNum = this.AskNumber("プレイヤー");
+                cNum = this.AskNumber("コンピュータ");
             }
 
-            this.game = new Game(pNum, cNum);
+            return new Tuple<int, int>(pNum, cNum);
         }
 
-        private int AskPlayersNum()
+        private int AskNumber(string entityName)
         {
-            int pNum;
-            Console.WriteLine("プレイヤーの人数を入力してください。");
-            pNum = this.ReadNumber();
-            while (pNum < 0)
+            Console.WriteLine($"{entityName}の人数を入力してください。");
+            int ret = this.ReadNumber();
+            while (ret < 0)
             {
                 Console.WriteLine("0以上の数字を入力してください。");
-                pNum = this.ReadNumber();
+                ret = this.ReadNumber();
             }
 
-            return pNum;
-        }
-
-        private int AskComputersNum()
-        {
-            int cNum;
-            Console.WriteLine("コンピュータの人数を入力してください。");
-            cNum = this.ReadNumber();
-            while (cNum < 0)
-            {
-                Console.WriteLine("0以上の数字を入力してください。");
-                cNum = this.ReadNumber();
-            }
-
-            return cNum;
+            return ret;
         }
 
         private int[] GetHandData(List<string> l)
@@ -184,7 +176,7 @@
         /// じゃんけんゲームを終えるかどうかの判定をし、判定結果を返す
         /// </summary>
         /// <returns>じゃんけんゲームを終える場合、true. それ以外の場合、false</returns>
-        private bool AskQuit()
+        private bool AskContinue()
         {
             while (true)
             {
@@ -194,12 +186,12 @@
                 switch (i)
                 {
                     case 0:
-                        return false;
-                    case 1:
-                        this.AskMembersNum();
-                        return false;
-                    case 2:
                         return true;
+                    case 1:
+                        this.InitGame();
+                        return true;
+                    case 2:
+                        return false;
                     default:
                         Console.WriteLine("0から2の整数を入力してください。");
                         break;
